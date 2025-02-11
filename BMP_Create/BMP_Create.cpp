@@ -119,17 +119,96 @@ int main() {
     window.setFramerateLimit(60);
 
     double zoom = 1.0;
-    sf::Vector2<double> center(-0.7467745116055939, -0.1071315080796475);
+    //sf::Vector2<double> center(-0.7467745116055939, -0.1071315080796475); //orig zoom postion
+    sf::Vector2<double> center(-0.7448109501771761, -0.1071465558960558);
     int maxIterations = 1000; // Increased for better detail at high zoom
 
     // Define the end point for the zoom
-    sf::Vector2<double> endCenter(-0.7467745116055939, -0.1071315080796475);
+    sf::Vector2<double> endCenter(-0.7448109501771761, -0.1071465558960558);
+
     double endZoom = 1.264056845e+15;
 
-    // Record frames automatically
-    recordFrames(window, zoom, center, maxIterations, endCenter, endZoom);
+    // Load a font to display text
+    sf::Font font;
+    if (!font.loadFromFile("C:/Users/abroadbent/source/repos/BMP_Create/font/arial.ttf")) {
+        std::cerr << "Failed to load font" << std::endl;
+        return -1;
+    }
 
-    // Exit after recording
-    window.close();
+    // Create text objects for center and zoom values
+    sf::Text centerText, zoomText;
+    centerText.setFont(font);
+    zoomText.setFont(font);
+    centerText.setCharacterSize(20);
+    zoomText.setCharacterSize(20);
+    centerText.setFillColor(sf::Color::White);
+    zoomText.setFillColor(sf::Color::White);
+    centerText.setPosition(10, 10);
+    zoomText.setPosition(10, 40);
+
+    bool showText = true;
+    bool recording = false;
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::T) {
+                    showText = !showText;
+                }
+                if (event.key.code == sf::Keyboard::R) {
+                    recording = true;
+                }
+            }
+
+            if (event.type == sf::Event::MouseWheelScrolled) {
+                if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
+                    double zoomFactor = 1.1;
+                    if (event.mouseWheelScroll.delta > 0)
+                        zoom /= zoomFactor;
+                    else
+                        zoom *= zoomFactor;
+                }
+            }
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+            center.x -= 0.01 / zoom;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            center.x += 0.01 / zoom;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            center.y -= 0.01 / zoom;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            center.y += 0.01 / zoom;
+        }
+
+        window.clear();
+        drawFractal(window, zoom, center, maxIterations, 0.0f);
+
+        if (showText) {
+            std::ostringstream centerStream, zoomStream;
+            centerStream << std::setprecision(std::numeric_limits<double>::digits10 + 1)
+                << "Center: (" << center.x << ", " << center.y << ")";
+            zoomStream << "Zoom: " << zoom;
+            centerText.setString(centerStream.str());
+            zoomText.setString(zoomStream.str());
+            window.draw(centerText);
+            window.draw(zoomText);
+        }
+
+        window.display();
+
+        if (recording) {
+            recordFrames(window, zoom, center, maxIterations, endCenter, endZoom);
+            recording = false;
+        }
+    }
+
     return 0;
 }
