@@ -72,8 +72,8 @@ void drawFractal(sf::RenderWindow& window, double zoom, sf::Vector2<double> cent
     window.draw(pixels);
 }
 
-void recordFrames(sf::RenderWindow& window, double& zoom, sf::Vector2<double>& center, int maxIterations, const sf::Vector2<double>& endCenter, double endZoom, float time) {
-    const int framesPerInterpolation = 1280; // Exactly 1280 frames
+void recordFrames(sf::RenderWindow& window, double& zoom, sf::Vector2<double>& center, int maxIterations, const sf::Vector2<double>& endCenter, double endZoom) {
+    const int framesPerInterpolation = 900; // Exactly 900 frames
     const std::string folderName = "recorded_frames";
     std::filesystem::create_directory(folderName); // Create directory for frames
 
@@ -94,6 +94,9 @@ void recordFrames(sf::RenderWindow& window, double& zoom, sf::Vector2<double>& c
         // Logarithmic interpolation for zoom
         zoom = std::exp(zoomLogStart + t * (zoomLogEnd - zoomLogStart));
 
+        // Calculate time based on frame index for color cycling
+        float time = static_cast<float>(j) / framesPerInterpolation;
+
         window.clear();
         drawFractal(window, zoom, center, maxIterations, time);
         window.display();
@@ -105,14 +108,10 @@ void recordFrames(sf::RenderWindow& window, double& zoom, sf::Vector2<double>& c
         sf::Image screenshot = texture.copyToImage();
 
         std::ostringstream filename;
-        filename << folderName << "/test_frame_" << std::setfill('0') << std::setw(5) << j << ".png";
+        filename << folderName << "/frame_" << std::setfill('0') << std::setw(5) << j << ".png";
         screenshot.saveToFile(filename.str());
         std::cout << "Frame captured: " << filename.str() << std::endl;
     }
-
-    // Reset to the starting position after recording
-    zoom = startZoom;
-    center = startCenter;
 }
 
 int main() {
@@ -122,98 +121,15 @@ int main() {
     double zoom = 1.0;
     sf::Vector2<double> center(-0.7467745116055939, -0.1071315080796475);
     int maxIterations = 1000; // Increased for better detail at high zoom
-    const double moveSpeed = 0.05; // Adjust this to change how fast the view moves
-    bool isMiddleMouseDown = false;
-    sf::Vector2i middleMouseStart;
 
-    // Font for text rendering
-    sf::Font font;
-    if (!font.loadFromFile("C:/Users/abroadbent/source/repos/BMP_Create/font/arial.ttf")) {
-        std::cout << "Failed to load font! Using default font." << std::endl;
-        // Use a default font if loading fails
-        font = sf::Font(); // SFML has a default font
-    }
+    // Define the end point for the zoom
+    sf::Vector2<double> endCenter(-0.7467745116055939, -0.1071315080796475);
+    double endZoom = 1.264056845e+15;
 
-    sf::Text text;
-    text.setFont(font);
-    text.setCharacterSize(24);
-    text.setFillColor(sf::Color::White);
-    text.setPosition(10, 10);  // Position of the text
+    // Record frames automatically
+    recordFrames(window, zoom, center, maxIterations, endCenter, endZoom);
 
-    sf::Clock clock;
-
-    while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                window.close();
-            else if (event.type == sf::Event::MouseButtonPressed) {
-                if (event.mouseButton.button == sf::Mouse::Middle) {
-                    isMiddleMouseDown = true;
-                    middleMouseStart = sf::Mouse::getPosition(window);
-                }
-            }
-            else if (event.type == sf::Event::MouseButtonReleased) {
-                if (event.mouseButton.button == sf::Mouse::Middle) {
-                    isMiddleMouseDown = false;
-                }
-            }
-            else if (event.type == sf::Event::MouseMoved) {
-                if (isMiddleMouseDown) {
-                    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                    sf::Vector2<double> worldDelta = static_cast<sf::Vector2<double>>(window.mapPixelToCoords(mousePos) - window.mapPixelToCoords(middleMouseStart));
-                    center -= worldDelta / zoom; // Move opposite to mouse movement
-                    middleMouseStart = mousePos; // Update the start position for the next movement
-                }
-            }
-            else if (event.type == sf::Event::MouseWheelScrolled) {
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                sf::Vector2<double> mouseWorldPosBeforeZoom = static_cast<sf::Vector2<double>>(window.mapPixelToCoords(mousePos));
-
-                if (event.mouseWheelScroll.delta > 0)
-                    zoom *= 0.9;  // Zoom in
-                else
-                    zoom *= 1.1;  // Zoom out
-
-                sf::Vector2<double> mouseWorldPosAfterZoom = static_cast<sf::Vector2<double>>(window.mapPixelToCoords(mousePos));
-                center += mouseWorldPosBeforeZoom - mouseWorldPosAfterZoom;
-            }
-            else if (event.type == sf::Event::KeyPressed) {
-                // Navigation with arrow keys
-                if (event.key.code == sf::Keyboard::Left) {
-                    center.x -= moveSpeed / zoom;
-                }
-                else if (event.key.code == sf::Keyboard::Right) {
-                    center.x += moveSpeed / zoom;
-                }
-                else if (event.key.code == sf::Keyboard::Up) {
-                    center.y -= moveSpeed / zoom;
-                }
-                else if (event.key.code == sf::Keyboard::Down) {
-                    center.y += moveSpeed / zoom;
-                }
-                else if (event.key.code == sf::Keyboard::R) {
-                    sf::Vector2<double> endCenter(-0.7467745116055939, -0.1071315080796475);
-                    double endZoom = 1.264056845e+15;
-                    float time = clock.getElapsedTime().asSeconds() * 0.1f; // Adjust the multiplier to control the speed of color cycling
-                    recordFrames(window, zoom, center, maxIterations, endCenter, endZoom, time);
-                }
-            }
-        }
-
-        float time = clock.getElapsedTime().asSeconds() * 0.01f; // Adjust the multiplier to control the speed of color cycling
-
-        window.clear();
-        drawFractal(window, zoom, center, maxIterations, time);
-
-        // Update text with current center and zoom values
-        std::ostringstream stream;
-        stream << std::fixed << std::setprecision(16) << "Center: (" << center.x << ", " << center.y << ") Zoom: " << zoom;
-        text.setString(stream.str());
-
-        window.draw(text);
-        window.display();
-    }
-
+    // Exit after recording
+    window.close();
     return 0;
 }
