@@ -2,19 +2,19 @@
 C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(14,23): warning C4018: '<': signed/unsigned mismatch
 C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(15,27): warning C4018: '<': signed/unsigned mismatch
 C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(32,35): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(40,76): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(47,92): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(44,76): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(51,92): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(63,75): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(63,75): warning C4244:         with
-C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(63,75): warning C4244:         [
-C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(63,75): warning C4244:             T=float
-C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(63,75): warning C4244:         ]
-C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(63,72): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(63,72): warning C4244:         with
-C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(63,72): warning C4244:         [
-C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(63,72): warning C4244:             T=float
-C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(63,72): warning C4244:         ]
+C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(55,92): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(67,75): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(67,75): warning C4244:         with
+C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(67,75): warning C4244:         [
+C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(67,75): warning C4244:             T=float
+C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(67,75): warning C4244:         ]
+C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(67,72): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(67,72): warning C4244:         with
+C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(67,72): warning C4244:         [
+C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(67,72): warning C4244:             T=float
+C:\Users\abroadbent\source\repos\BMP_Create\BMP_Create\BMP_Create.cpp(67,72): warning C4244:         ]
   Generating code
   1 of 333 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation

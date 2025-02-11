@@ -8,7 +8,7 @@
 #include <filesystem>
 
 // Function to draw a fractal (Mandelbrot set for simplicity)
-void drawFractal(sf::RenderWindow& window, double zoom, sf::Vector2<double> center, int maxIterations) {
+void drawFractal(sf::RenderWindow& window, double zoom, sf::Vector2<double> center, int maxIterations, float time) {
     sf::VertexArray pixels(sf::Points, window.getSize().x * window.getSize().y);
 
     for (int x = 0; x < window.getSize().x; ++x) {
@@ -31,6 +31,10 @@ void drawFractal(sf::RenderWindow& window, double zoom, sf::Vector2<double> cent
             else {
                 float smoothColor = i + 1 - std::log(std::log(std::sqrt(zx * zx + zy * zy))) / std::log(2); // Smooth coloring
                 float hue = static_cast<float>(smoothColor) / maxIterations;
+
+                // Add time-based offset to the hue
+                hue += time;
+                if (hue > 1.0f) hue -= 1.0f; // Wrap around if hue exceeds 1.0
 
                 // Stylish color gradient
                 float r, g, b;
@@ -68,9 +72,8 @@ void drawFractal(sf::RenderWindow& window, double zoom, sf::Vector2<double> cent
     window.draw(pixels);
 }
 
-void recordFrames(sf::RenderWindow& window, double& zoom, sf::Vector2<double>& center, int maxIterations, const sf::Vector2<double>& endCenter, double endZoom) {
+void recordFrames(sf::RenderWindow& window, double& zoom, sf::Vector2<double>& center, int maxIterations, const sf::Vector2<double>& endCenter, double endZoom, float time) {
     const int framesPerInterpolation = 1280; // Exactly 1280 frames
-    //const int framesPerInterpolation = 180; // Exactly 180 frames
     const std::string folderName = "recorded_frames";
     std::filesystem::create_directory(folderName); // Create directory for frames
 
@@ -92,7 +95,7 @@ void recordFrames(sf::RenderWindow& window, double& zoom, sf::Vector2<double>& c
         zoom = std::exp(zoomLogStart + t * (zoomLogEnd - zoomLogStart));
 
         window.clear();
-        drawFractal(window, zoom, center, maxIterations);
+        drawFractal(window, zoom, center, maxIterations, time);
         window.display();
 
         // Capture frame using Texture
@@ -113,12 +116,10 @@ void recordFrames(sf::RenderWindow& window, double& zoom, sf::Vector2<double>& c
 }
 
 int main() {
-    //sf::RenderWindow window(sf::VideoMode(1920, 1080), "Fractal Zoom");
     sf::RenderWindow window(sf::VideoMode(800, 600), "Fractal Zoom");
     window.setFramerateLimit(60);
 
     double zoom = 1.0;
-    //sf::Vector2<double> center(0.0, 0.0);
     sf::Vector2<double> center(-0.7467745116055939, -0.1071315080796475);
     int maxIterations = 1000; // Increased for better detail at high zoom
     const double moveSpeed = 0.05; // Adjust this to change how fast the view moves
@@ -138,6 +139,8 @@ int main() {
     text.setCharacterSize(24);
     text.setFillColor(sf::Color::White);
     text.setPosition(10, 10);  // Position of the text
+
+    sf::Clock clock;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -190,19 +193,20 @@ int main() {
                     center.y += moveSpeed / zoom;
                 }
                 else if (event.key.code == sf::Keyboard::R) {
-                    sf::Vector2<double> endCenter(-0.7467745116055939,-0.1071315080796475);
-                    //sf::Vector2<double> endCenter(-0.7363711003375304, -0.2085400363170249);
+                    sf::Vector2<double> endCenter(-0.7467745116055939, -0.1071315080796475);
                     double endZoom = 1.264056845e+15;
-                    recordFrames(window, zoom, center, maxIterations, endCenter, endZoom);
+                    float time = clock.getElapsedTime().asSeconds() * 0.1f; // Adjust the multiplier to control the speed of color cycling
+                    recordFrames(window, zoom, center, maxIterations, endCenter, endZoom, time);
                 }
             }
         }
 
+        float time = clock.getElapsedTime().asSeconds() * 0.01f; // Adjust the multiplier to control the speed of color cycling
+
         window.clear();
-        drawFractal(window, zoom, center, maxIterations);
+        drawFractal(window, zoom, center, maxIterations, time);
 
         // Update text with current center and zoom values
-
         std::ostringstream stream;
         stream << std::fixed << std::setprecision(16) << "Center: (" << center.x << ", " << center.y << ") Zoom: " << zoom;
         text.setString(stream.str());
